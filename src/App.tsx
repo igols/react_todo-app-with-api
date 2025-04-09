@@ -2,7 +2,13 @@
 /* eslint-disable jsx-a11y/control-has-associated-label */
 import React, { useEffect, useState } from 'react';
 import { UserWarning } from './UserWarning';
-import { addTodos, deleteTodos, getTodos, USER_ID } from './api/todos';
+import {
+  addTodos,
+  deleteTodos,
+  getTodos,
+  USER_ID,
+  uppTodos,
+} from './api/todos';
 import { Header } from './component/Header';
 import { Section } from './component/Section/Section';
 import { Footer } from './component/Footer/Footer';
@@ -95,8 +101,20 @@ export const App: React.FC = () => {
     });
   };
 
+  const handleUppCompleted = (todo: Todo) => {
+    const uppComplit = {
+      id: todo.id,
+      userId: todo.userId,
+      title: todo.title,
+      completed: false,
+    };
+
+    uppTodos(uppComplit);
+  };
+
   if (!USER_ID) {
     return <UserWarning />;
+    handleUppCompleted(todos[0]);
   }
 
   return (
