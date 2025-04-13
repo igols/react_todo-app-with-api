@@ -1,18 +1,30 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Todo } from '../../types/Todo';
 import cn from 'classnames';
 
 type Props = {
   todo: Todo;
   handleDeleteTodo: (value: number) => void;
-  loading?: boolean;
+  loading: boolean;
+  handleUppCompleted: (todos: Todo) => void;
+  newTitle: string;
+  setNewTitle: (newTitle: string) => void;
+  handleUppEdit: (todos: Todo) => void;
+  setLoading: (value: boolean) => void;
 };
 
 export const TodoItem: React.FC<Props> = ({
   todo,
   handleDeleteTodo,
-  loading = false,
+  loading,
+  handleUppCompleted,
+  newTitle = todo.title,
+  setNewTitle,
+  handleUppEdit,
+  setLoading,
 }) => {
+  const [edited, setEdited] = useState(false);
+
   return (
     <div data-cy="Todo" className={cn('todo', { completed: todo.completed })}>
       <label className="todo__status-label">
@@ -22,15 +34,38 @@ export const TodoItem: React.FC<Props> = ({
           type="checkbox"
           className="todo__status"
           id={`${todo.id}`}
-          checked={todo.completed}
+          defaultChecked={todo.completed}
           disabled={loading}
+          onClick={() => {
+            handleUppCompleted(todo);
+          }}
         />
       </label>
 
-      <span data-cy="TodoTitle" className="todo__title">
-        {todo.title}
-      </span>
-
+      {edited ? (
+        <input
+          autoFocus
+          type="text"
+          className="todo__title-field"
+          value={newTitle}
+          onChange={e => setNewTitle(e.target.value.trim())}
+          onBlur={() => {
+            handleUppEdit(todo);
+            setEdited(false);
+          }}
+        />
+      ) : (
+        <span
+          data-cy="TodoTitle"
+          className="todo__title"
+          onDoubleClick={() => {
+            setEdited(true);
+            setLoading(true);
+          }}
+        >
+          {todo.title}
+        </span>
+      )}
       {/* Remove button appears only on hover */}
       <button
         type="button"

@@ -6,9 +6,13 @@ type Props = {
   todos: Todo[];
   handleDeleteTodo: (id: number) => void;
   tempTodo?: Todo | null;
-  setLoading?: () => void;
+  setLoading: (value: boolean) => void;
   loading: boolean;
   loadingId?: number[];
+  handleUppCompleted: (todos: Todo) => void;
+  newTitle: string;
+  setNewTitle: (newTitle: string) => void;
+  handleUppEdit: (todos: Todo) => void;
 };
 
 export const Section: React.FC<Props> = ({
@@ -17,6 +21,11 @@ export const Section: React.FC<Props> = ({
   handleDeleteTodo,
   loading,
   loadingId = [],
+  handleUppCompleted,
+  newTitle,
+  setNewTitle,
+  handleUppEdit,
+  setLoading,
 }) => {
   return (
     <section className="todoapp__main" data-cy="TodoList">
@@ -27,6 +36,11 @@ export const Section: React.FC<Props> = ({
           handleDeleteTodo={handleDeleteTodo}
           todo={todo}
           loading={loadingId.includes(todo.id)}
+          handleUppCompleted={handleUppCompleted}
+          newTitle={newTitle}
+          setNewTitle={setNewTitle}
+          handleUppEdit={handleUppEdit}
+          setLoading={setLoading}
         />
       ))}
       {tempTodo && loading && (
@@ -35,6 +49,11 @@ export const Section: React.FC<Props> = ({
           todo={tempTodo}
           handleDeleteTodo={handleDeleteTodo}
           loading={loading}
+          handleUppCompleted={handleUppCompleted}
+          newTitle={newTitle}
+          setNewTitle={setNewTitle}
+          handleUppEdit={handleUppEdit}
+          setLoading={setLoading}
         />
       )}
     </section>

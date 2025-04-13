@@ -1,4 +1,17 @@
 /* eslint-disable max-len */
+/* const handlePressedKeyEditing = (
+    e: React.KeyboardEvent<HTMLInputElement>,
+  ) => {
+    if (e.key === 'Enter') {
+      handleEditing();
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      setEditedTitle(todo.title);
+      setEditing(false);
+    }
+  };
+**/
+
 /* eslint-disable jsx-a11y/control-has-associated-label */
 import React, { useEffect, useState } from 'react';
 import { UserWarning } from './UserWarning';
@@ -24,7 +37,7 @@ export const App: React.FC = () => {
   const [selectedFilter, setselectedFilter] = useState<string>(Filter.All);
   const [tempTodo, setTempTodo] = useState<Todo | null>(null);
   const [loadingId, setloadingId] = useState<number[]>([]);
-
+  const [newTitle, setNewTitle] = useState<string>(newTodo);
   const loadTodos = async (): Promise<void> => {
     setLoading(true);
     try {
@@ -101,20 +114,54 @@ export const App: React.FC = () => {
     });
   };
 
-  const handleUppCompleted = (todo: Todo) => {
+  const handleUppCompleted = async (todo: Todo) => {
+    setLoading(true);
     const uppComplit = {
       id: todo.id,
       userId: todo.userId,
       title: todo.title,
-      completed: false,
+      completed: todo.completed === false ? true : false,
     };
 
-    uppTodos(uppComplit);
+    try {
+      await uppTodos(uppComplit.id, uppComplit);
+    } catch {
+      setLoading(true);
+    } finally {
+      loadTodos();
+      setLoading(false);
+      setNewTitle('');
+    }
+  };
+
+  const handleUppEdit = async (todo: Todo) => {
+    setLoading(true);
+    if (newTitle.length === 0) {
+      handleDeleteTodo(todo.id);
+
+      return;
+    }
+
+    const uppComplit = {
+      id: todo.id,
+      userId: todo.userId,
+      title: newTitle,
+      completed: todo.completed,
+    };
+
+    try {
+      await uppTodos(uppComplit.id, uppComplit);
+    } catch {
+      setLoading(true);
+    } finally {
+      loadTodos();
+      setLoading(false);
+      setNewTitle('');
+    }
   };
 
   if (!USER_ID) {
     return <UserWarning />;
-    handleUppCompleted(todos[0]);
   }
 
   return (
@@ -137,6 +184,11 @@ export const App: React.FC = () => {
               handleDeleteTodo={handleDeleteTodo}
               loading={loading}
               loadingId={loadingId}
+              handleUppCompleted={handleUppCompleted}
+              newTitle={newTitle}
+              setNewTitle={setNewTitle}
+              handleUppEdit={handleUppEdit}
+              setLoading={setLoading}
             />
             {todos.length > 0 && (
               <Footer
