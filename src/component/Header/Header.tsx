@@ -8,6 +8,7 @@ type Props = {
   loading: boolean;
   handleAddTodo?: (event: React.FormEvent) => void;
   loadTodos?: () => void;
+  handleUppAllCompleted: () => void;
 };
 
 export const Header: React.FC<Props> = ({
@@ -16,7 +17,7 @@ export const Header: React.FC<Props> = ({
   setNewTodo,
   loading,
   handleAddTodo,
-  loadTodos,
+  handleUppAllCompleted,
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -33,7 +34,7 @@ export const Header: React.FC<Props> = ({
           active: todos.length > 0 && todos.every(todo => todo.completed),
         })}
         data-cy="ToggleAllButton"
-        onClick={() => loadTodos}
+        onClick={() => handleUppAllCompleted()}
       />
       {/* +Add a todo on form submit */}
       <form onSubmit={handleAddTodo}>

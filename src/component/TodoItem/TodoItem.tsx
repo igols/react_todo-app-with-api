@@ -38,7 +38,6 @@ export const TodoItem: React.FC<Props> = ({
           disabled={loading}
           onClick={() => {
             handleUppCompleted(todo);
-            setLoading(true);
           }}
         />
       </label>

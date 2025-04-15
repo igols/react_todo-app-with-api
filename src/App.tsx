@@ -125,12 +125,41 @@ export const App: React.FC = () => {
 
     try {
       await uppTodos(uppComplit.id, uppComplit);
-    } catch {
-      setLoading(true);
     } finally {
       loadTodos();
       setLoading(false);
       setNewTitle('');
+    }
+  };
+
+  const handleUppAllCompleted = async () => {
+    setLoading(true);
+    try {
+      if (
+        todos.length === todos.filter(todo => todo.completed === true).length
+      ) {
+        todos.forEach(todo =>
+          uppTodos(todo.id, {
+            id: todo.id,
+            userId: todo.userId,
+            title: todo.title,
+            completed: false,
+          }),
+        );
+      } else {
+        todos
+          .filter(todo => todo.completed === false)
+          .forEach(todo =>
+            uppTodos(todo.id, {
+              id: todo.id,
+              userId: todo.userId,
+              title: todo.title,
+              completed: true,
+            }),
+          );
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -175,6 +204,7 @@ export const App: React.FC = () => {
           loading={loading}
           handleAddTodo={handleAddTodo}
           loadTodos={loadTodos}
+          handleUppAllCompleted={handleUppAllCompleted}
         />
         {todos.length > 0 && (
           <>
