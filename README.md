@@ -37,7 +37,8 @@ Implement the ability to edit a todo title on double click:
 - show `Unable to update a todo` in case of API error;
 - or the deletion error message if we tried to delete the todo.
 
-## If you want to enable tests
+## If you want to enable t
+ests
 - open `cypress/integration/page.spec.js`
 - replace `describe.skip` with `describe` for the root `describe`
 

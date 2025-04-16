@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Todo } from '../../types/Todo';
 import cn from 'classnames';
 
@@ -18,12 +18,34 @@ export const TodoItem: React.FC<Props> = ({
   handleDeleteTodo,
   loading,
   handleUppCompleted,
-  newTitle = todo.title,
+  newTitle,
   setNewTitle,
   handleUppEdit,
   setLoading,
 }) => {
   const [edited, setEdited] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (edited && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [edited]);
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      if (newTitle.trim() === todo.title) {
+        setEdited(false);
+      } else {
+        inputRef.current?.blur();
+      }
+    }
+
+    if (e.key === 'Escape') {
+      setEdited(false);
+      setNewTitle(todo.title);
+    }
+  };
 
   return (
     <div data-cy="Todo" className={cn('todo', { completed: todo.completed })}>
@@ -44,11 +66,12 @@ export const TodoItem: React.FC<Props> = ({
 
       {edited ? (
         <input
-          autoFocus
+          ref={inputRef}
           type="text"
           className="todo__title-field"
           value={newTitle}
           onChange={e => setNewTitle(e.target.value.trim())}
+          onKeyDown={handleKeyDown}
           onBlur={() => {
             handleUppEdit(todo);
             setEdited(false);
@@ -61,6 +84,7 @@ export const TodoItem: React.FC<Props> = ({
           onDoubleClick={() => {
             setEdited(true);
             setLoading(true);
+            setNewTitle(todo.title);
           }}
         >
           {todo.title}

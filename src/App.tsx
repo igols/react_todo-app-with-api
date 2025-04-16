@@ -37,7 +37,7 @@ export const App: React.FC = () => {
   const [selectedFilter, setselectedFilter] = useState<string>(Filter.All);
   const [tempTodo, setTempTodo] = useState<Todo | null>(null);
   const [loadingId, setloadingId] = useState<number[]>([]);
-  const [newTitle, setNewTitle] = useState<string>(newTodo);
+  const [newTitle, setNewTitle] = useState<string>('');
   const loadTodos = async (): Promise<void> => {
     setLoading(true);
     try {
@@ -114,6 +114,41 @@ export const App: React.FC = () => {
     });
   };
 
+  const handleUppAllCompleted = async () => {
+    setLoading(true);
+    try {
+      const allCompleted =
+        todos.length === todos.filter(todo => todo.completed === true).length;
+      // First update on the server
+
+      if (allCompleted) {
+        await Promise.all(
+          todos
+            .filter(todo => todo.completed === true)
+            .map(todo => uppTodos(todo.id, { completed: false })),
+        );
+      } else {
+        await Promise.all(
+          todos
+            .filter(todo => todo.completed === false)
+            .map(todo => uppTodos(todo.id, { completed: true })),
+        );
+      }
+      // Only update local state after server request succeeds
+
+      setTodos(prevTodos =>
+        prevTodos.map(todo => ({
+          ...todo,
+          completed: !allCompleted,
+        })),
+      );
+    } catch (error) {
+      setErrorMessege('Unable to update todos');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleUppCompleted = async (todo: Todo) => {
     setLoading(true);
     const uppComplit = {
@@ -132,37 +167,6 @@ export const App: React.FC = () => {
     }
   };
 
-  const handleUppAllCompleted = async () => {
-    setLoading(true);
-    try {
-      if (
-        todos.length === todos.filter(todo => todo.completed === true).length
-      ) {
-        todos.forEach(todo =>
-          uppTodos(todo.id, {
-            id: todo.id,
-            userId: todo.userId,
-            title: todo.title,
-            completed: false,
-          }),
-        );
-      } else {
-        todos
-          .filter(todo => todo.completed === false)
-          .forEach(todo =>
-            uppTodos(todo.id, {
-              id: todo.id,
-              userId: todo.userId,
-              title: todo.title,
-              completed: true,
-            }),
-          );
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleUppEdit = async (todo: Todo) => {
     setLoading(true);
     if (newTitle.length === 0) {
@@ -171,15 +175,8 @@ export const App: React.FC = () => {
       return;
     }
 
-    const uppComplit = {
-      id: todo.id,
-      userId: todo.userId,
-      title: newTitle,
-      completed: todo.completed,
-    };
-
     try {
-      await uppTodos(uppComplit.id, uppComplit);
+      await uppTodos(todo.id, { title: newTitle });
     } catch {
       setLoading(true);
     } finally {
