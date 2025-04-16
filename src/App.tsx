@@ -92,6 +92,7 @@ export const App: React.FC = () => {
       setErrorMessege('Unable to delete a todo');
     } finally {
       setLoading(false);
+      setloadingId([]);
     }
   };
 
@@ -150,7 +151,7 @@ export const App: React.FC = () => {
   };
 
   const handleUppCompleted = async (todo: Todo) => {
-    setLoading(true);
+    setloadingId(prev => [...prev, todo.id]);
     const uppComplit = {
       id: todo.id,
       userId: todo.userId,
