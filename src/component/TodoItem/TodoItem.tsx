@@ -32,9 +32,11 @@ export const TodoItem: React.FC<Props> = ({
     }
   }, [edited]);
 
+  const { title, id, completed } = todo;
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-      if (newTitle.trim() === todo.title) {
+      if (newTitle.trim() === title) {
         setEdited(false);
       } else {
         inputRef.current?.blur();
@@ -43,20 +45,20 @@ export const TodoItem: React.FC<Props> = ({
 
     if (e.key === 'Escape') {
       setEdited(false);
-      setNewTitle(todo.title);
+      setNewTitle(title);
     }
   };
 
   return (
-    <div data-cy="Todo" className={cn('todo', { completed: todo.completed })}>
+    <div data-cy="Todo" className={cn('todo', { completed: completed })}>
       <label className="todo__status-label">
         {}
         <input
           data-cy="TodoStatus"
           type="checkbox"
           className="todo__status"
-          id={`${todo.id}`}
-          defaultChecked={todo.completed}
+          checked={completed}
+          id={`${id}`}
           disabled={loading}
           onClick={() => {
             handleUppCompleted(todo);
@@ -67,6 +69,7 @@ export const TodoItem: React.FC<Props> = ({
       {edited ? (
         <input
           ref={inputRef}
+          placeholder="Empty todo will be deleted"
           type="text"
           className="todo__title-field"
           value={newTitle}
@@ -90,7 +93,7 @@ export const TodoItem: React.FC<Props> = ({
           {todo.title}
         </span>
       )}
-      {/* Remove button appears only on hover */}
+
       <button
         type="button"
         className="todo__remove"
@@ -101,7 +104,6 @@ export const TodoItem: React.FC<Props> = ({
         ×
       </button>
 
-      {/* overlay will cover the todo while it is being deleted or updated */}
       <div
         data-cy="TodoLoader"
         className={cn('modal overlay', {

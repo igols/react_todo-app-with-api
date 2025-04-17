@@ -1,18 +1,3 @@
-/* eslint-disable max-len */
-/* const handlePressedKeyEditing = (
-    e: React.KeyboardEvent<HTMLInputElement>,
-  ) => {
-    if (e.key === 'Enter') {
-      handleEditing();
-    } else if (e.key === 'Escape') {
-      e.preventDefault();
-      setEditedTitle(todo.title);
-      setEditing(false);
-    }
-  };
-**/
-
-/* eslint-disable jsx-a11y/control-has-associated-label */
 import React, { useEffect, useState } from 'react';
 import { UserWarning } from './UserWarning';
 import {
@@ -38,6 +23,7 @@ export const App: React.FC = () => {
   const [tempTodo, setTempTodo] = useState<Todo | null>(null);
   const [loadingId, setloadingId] = useState<number[]>([]);
   const [newTitle, setNewTitle] = useState<string>('');
+
   const loadTodos = async (): Promise<void> => {
     setLoading(true);
     try {
@@ -120,7 +106,6 @@ export const App: React.FC = () => {
     try {
       const allCompleted =
         todos.length === todos.filter(todo => todo.completed === true).length;
-      // First update on the server
 
       if (allCompleted) {
         await Promise.all(
@@ -135,7 +120,6 @@ export const App: React.FC = () => {
             .map(todo => uppTodos(todo.id, { completed: true })),
         );
       }
-      // Only update local state after server request succeeds
 
       setTodos(prevTodos =>
         prevTodos.map(todo => ({
@@ -160,11 +144,13 @@ export const App: React.FC = () => {
     };
 
     try {
-      await uppTodos(uppComplit.id, uppComplit);
+      await uppTodos(todo.id, uppComplit);
+    } catch (error) {
+      setErrorMessege('Unable to update todos');
     } finally {
-      loadTodos();
       setLoading(false);
-      setNewTitle('');
+      setloadingId([]);
+      loadTodos();
     }
   };
 
