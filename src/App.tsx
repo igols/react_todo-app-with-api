@@ -145,12 +145,12 @@ export const App: React.FC = () => {
 
     try {
       await uppTodos(todo.id, uppComplit);
+      loadTodos();
     } catch (error) {
       setErrorMessege('Unable to update todos');
     } finally {
       setLoading(false);
       setloadingId([]);
-      loadTodos();
     }
   };
 
