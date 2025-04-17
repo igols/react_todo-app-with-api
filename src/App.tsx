@@ -145,7 +145,7 @@ export const App: React.FC = () => {
 
     try {
       await uppTodos(todo.id, uppComplit);
-      loadTodos();
+      setTodos(await getTodos());
     } catch (error) {
       setErrorMessege('Unable to update todos');
     } finally {
@@ -167,7 +167,7 @@ export const App: React.FC = () => {
     } catch {
       setLoading(true);
     } finally {
-      loadTodos();
+      await loadTodos();
       setLoading(false);
       setNewTitle('');
     }

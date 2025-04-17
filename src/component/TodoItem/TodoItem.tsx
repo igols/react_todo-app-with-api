@@ -59,7 +59,6 @@ export const TodoItem: React.FC<Props> = ({
           className="todo__status"
           checked={completed}
           id={`${id}`}
-          disabled={loading}
           onClick={() => {
             handleUppCompleted(todo);
           }}
