@@ -137,7 +137,6 @@ export const App: React.FC = () => {
   const handleUppCompleted = async (todo: Todo) => {
     setloadingId(prev => [...prev, todo.id]);
     const uppComplit = {
-      id: todo.id,
       userId: todo.userId,
       title: todo.title,
       completed: todo.completed === false ? true : false,
@@ -145,9 +144,13 @@ export const App: React.FC = () => {
 
     try {
       await uppTodos(todo.id, uppComplit);
-      setTodos(await getTodos());
+      setTodos(prevTodos =>
+        prevTodos.map(t =>
+          t.id === todo.id ? { ...t, completed: uppComplit.completed } : t,
+        ),
+      );
     } catch (error) {
-      setErrorMessege('Unable to update todos');
+      setErrorMessege('Unable to update a todo');
     } finally {
       setLoading(false);
       setloadingId([]);
