@@ -68,11 +68,12 @@ export const TodoItem: React.FC<Props> = ({
       {edited ? (
         <input
           ref={inputRef}
+          data-cy="TodoTitleField"
           placeholder="Empty todo will be deleted"
           type="text"
           className="todo__title-field"
           value={newTitle}
-          onChange={e => setNewTitle(e.target.value.trim())}
+          onChange={e => setNewTitle(e.target.value)}
           onKeyDown={handleKeyDown}
           onBlur={() => {
             handleUppEdit(todo);
@@ -93,15 +94,17 @@ export const TodoItem: React.FC<Props> = ({
         </span>
       )}
 
-      <button
-        type="button"
-        className="todo__remove"
-        data-cy="TodoDelete"
-        onClick={() => handleDeleteTodo(todo.id)}
-        disabled={loading}
-      >
-        ×
-      </button>
+      {!edited && (
+        <button
+          type="button"
+          className="todo__remove"
+          data-cy="TodoDelete"
+          onClick={() => handleDeleteTodo(todo.id)}
+          disabled={loading}
+        >
+          ×
+        </button>
+      )}
 
       <div
         data-cy="TodoLoader"

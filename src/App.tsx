@@ -159,20 +159,29 @@ export const App: React.FC = () => {
 
   const handleUppEdit = async (todo: Todo) => {
     setLoading(true);
-    if (newTitle.length === 0) {
+    setloadingId(prev => [...prev, todo.id]);
+    if (newTitle.trim().length === 0) {
       handleDeleteTodo(todo.id);
 
       return;
     }
 
+    setTodos(prevTodos =>
+      prevTodos.map(t =>
+        t.id === todo.id ? { ...t, title: newTitle.trim() } : t,
+      ),
+    );
+
     try {
-      await uppTodos(todo.id, { title: newTitle });
+      await uppTodos(todo.id, { title: newTitle.trim() });
     } catch {
-      setLoading(true);
+      setLoading(false);
+      setloadingId([]);
+      setErrorMessege('Unable to update a todo');
     } finally {
-      await loadTodos();
       setLoading(false);
       setNewTitle('');
+      setloadingId([]);
     }
   };
 
