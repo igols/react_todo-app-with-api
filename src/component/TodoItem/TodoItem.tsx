@@ -9,7 +9,7 @@ type Props = {
   handleUppCompleted: (todos: Todo) => void;
   newTitle: string;
   setNewTitle: (newTitle: string) => void;
-  handleUppEdit: (todos: Todo) => void;
+  handleUppEdit: (todos: Todo) => Promise<boolean[]>;
   setLoading: (value: boolean) => void;
 };
 
@@ -33,6 +33,19 @@ export const TodoItem: React.FC<Props> = ({
   }, [edited]);
 
   const { title, id, completed } = todo;
+
+  const handleBlur = async () => {
+    if (newTitle.trim().length === 0) {
+      handleDeleteTodo(todo.id);
+
+      return;
+    }
+
+    try {
+      await handleUppEdit(todo);
+      setEdited(false);
+    } catch {}
+  };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
@@ -75,10 +88,7 @@ export const TodoItem: React.FC<Props> = ({
           value={newTitle}
           onChange={e => setNewTitle(e.target.value)}
           onKeyDown={handleKeyDown}
-          onBlur={() => {
-            handleUppEdit(todo);
-            setEdited(false);
-          }}
+          onBlur={handleBlur}
         />
       ) : (
         <span
